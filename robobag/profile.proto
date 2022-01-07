@@ -1,0 +1,107 @@
+syntax = "proto3";
+package ros;
+
+message Profile {
+	Meta meta=1;
+	Version version=2;
+	BagHeader bag_header=3;
+	repeated Connection connection=4;
+	repeated Chunk chunk=5;
+	repeated ChunkInfo chunk_info=6;
+}
+
+enum Op{
+	UNKNOWN=0;
+	OP_MESSAGE_DATA = 2;
+	OP_BAG_HEADER = 3;
+	OP_INDEX_DATA = 4;
+	OP_CHUNK = 5;
+	OP_CHUNK_INFO = 6;
+	OP_CONNECTION = 7;
+}
+
+message Meta{
+	int64 file_size=1;
+}
+
+message Version{
+	int64 _start=1;
+	int64 _end=2;
+	string version_type=3;
+	string major_version=4;
+	string minor_version=5;
+}
+
+message BagHeader{
+	int64 _start=1;
+	int64 _end=2;
+	Op _op=3;
+	int64 index_pos=4;
+	int64 chunk_count=5;
+	int64 conn_count=6;
+	string encryptor=7;
+}
+
+message Connection{
+	int64 _start=1;
+	int64 _end=2;
+	Op _op=3;
+	int32 conn=4;
+	string topic=5;
+	string type=6;
+	string md5sum=7;
+	optional string message_definition=8;
+}
+
+message Time{
+	int64 secs=1;
+	int64 nsecs=2;
+}
+
+message Chunk{
+	int64 _start=1;
+	int64 _end=2;
+	message ChunkHeader{
+		int64 _start=1;
+		int64 _end=2;
+		Op _op=3;	
+		string compression=4;
+		int64 compressed_size=5;
+	}
+	ChunkHeader chunk_header=3;
+	message IndexData{
+		int64 _start=1;
+		int64 _end=2;
+		Op _op=3;
+		int32 version=4;
+		int32 conn=5;
+		int32 count=6;
+	}
+	repeated IndexData index_data=4;
+	repeated Connection connection=5;
+	message MessageData{
+		int64 _start=1;
+		int64 _end=2;
+		Op _op=3;		
+		Time time=4;
+		int32 conn=5;
+	}
+	repeated MessageData message_data=6;
+
+}
+
+message ChunkInfo{
+	int64 _start=1;
+	int64 _end=2;
+	Op _op=3;
+	int64 chunk_pos=4;
+	Time start_time=5;
+	Time end_time=6;
+	int32 count=7;
+	int32 ver=8;
+	message MsgCount{
+		int32 conn=1;
+		int32 count=2;
+	}
+	repeated MsgCount msg_count=9;
+}

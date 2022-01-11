@@ -126,7 +126,7 @@ class Bag():
     def _read_connection(self, f):
         conn, topic = self._read_connection_header(f)
         type_, md5sum, msg_def, topic2 = self._read_connection_data(f)
-        if topic != topic2:
+        if topic is not None and topic2 is not None and topic != topic2:
             raise Exception()
 
         return (conn, topic, type_, md5sum, msg_def)
@@ -139,11 +139,16 @@ class Bag():
 
     def _read_connection_data(self, f):
         header = self._read_header(f)
-        type = decode_str(header['type'])
-        md5sum = decode_str(header['md5sum'])
-        message_definition = decode_str(header['message_definition'])
-        topic = decode_str(header['topic'])
-        return (type, md5sum, message_definition, topic)
+        type_, md5sum, message_definition, topic = None, None, None, None
+        if 'type' in header:
+            type_ = decode_str(header['type'])
+        if 'md5sum' in header:
+            md5sum = decode_str(header['md5sum'])
+        if 'message_definition' in header:
+            message_definition = decode_str(header['message_definition'])
+        if 'topic' in header:
+            topic = decode_str(header['topic'])
+        return (type_, md5sum, message_definition, topic)
 
     def _read_bag_chunk_info(self):
         for i in tqdm(range(self._bag_header['chunk_count']), desc="read bag chunk info"):

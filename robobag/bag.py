@@ -6,7 +6,6 @@ import re
 import struct
 from .util import read_uint32, decode_str, unpack_uint8,\
     unpack_uint32, unpack_uint64, unpack_time, read_time, Time
-from tqdm import tqdm
 import logging
 from .profile_pb2 import Profile
 import json
@@ -104,7 +103,7 @@ class Bag():
         return
 
     def _read_bag_connection(self):
-        for i in tqdm(range(self._bag_header['conn_count']), desc="read bag connection"):
+        for i in range(self._bag_header['conn_count']):
             start = self._file.tell()
             conn, topic, type_, md5sum, msg_def = self._read_connection(
                 self._file)
@@ -151,7 +150,7 @@ class Bag():
         return (type_, md5sum, message_definition, topic)
 
     def _read_bag_chunk_info(self):
-        for i in tqdm(range(self._bag_header['chunk_count']), desc="read bag chunk info"):
+        for i in range(self._bag_header['chunk_count']):
             start = self._file.tell()
             header = self._read_header(self._file)
             chunk_pos = unpack_uint64(header['chunk_pos'])
@@ -182,7 +181,7 @@ class Bag():
         self._chunk_pos.sort()
 
     def _read_bag_chunk(self):
-        for pos in tqdm(self._chunk_pos, desc="read bag chunk"):
+        for pos in self._chunk_pos:
             self._file.seek(pos)
             c = {'_start': pos}
 

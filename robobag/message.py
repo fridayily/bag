@@ -5,7 +5,6 @@ import os
 from . import profile_pb2
 import pyarrow as pa
 import pyarrow.parquet as pq
-from tqdm import tqdm
 import numpy as np
 import cv2
 
@@ -275,7 +274,7 @@ class Message():
         hive_schema = self._to_hive_schema(pa_schema)
 
         data = []
-        for idx in tqdm(message_data_index, desc=topic):
+        for idx in message_data_index:
             self._file.seek(idx._start)
             header = read_sized(self._file)
             message_bytes = read_sized(self._file)

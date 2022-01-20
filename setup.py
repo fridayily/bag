@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='robobag',
-    version='0.2',
+    version='0.2.2',
     description='Tool for processing ros bag file.',
     url='https://github.com/wzy816/bag',
     author_email='no-reply@gmail.com',
@@ -12,7 +12,6 @@ setup(
         'protobuf==3.19.1',
         'pyarrow==6.0.1',
         'opencv-python==4.5.4.60',
-        'tqdm==4.62.3',
     ],
     packages=find_packages(),
 )

@@ -1,0 +1,5 @@
+-i https://pypi.douban.com/simple/
+
+pyarrow==6.0.1
+opencv-python==4.5.4.60
+protobuf==3.19.1

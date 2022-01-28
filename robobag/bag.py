@@ -51,8 +51,8 @@ class Bag():
         self._read_bag_chunk()
 
     @property
-    def profile(self):
-        profile = {
+    def profile_json(self):
+        return {
             'version': self._version,
             'bag_header': self._bag_header,
             'connection': self._connection,
@@ -62,7 +62,11 @@ class Bag():
             'chunk': list(self._chunk.values()),
             'chunk_info': self._chunk_info,
         }
-        return json_format.Parse(json.dumps(profile), Profile())
+
+    @property
+    def profile(self):
+        p = self.profile_json()
+        return json_format.Parse(json.dumps(p), Profile())
 
     def _read_version(self):
         version_line = self._file.readline().rstrip().decode()

@@ -17,4 +17,15 @@ python3 setup.py sdist
 # publish to pypi
 pip install twine
 twine upload dist/*
+
+# use as cli
+robobag --help
+robobag profile -i /path/to/data.bag
+robobag extract -i /path/to/data.bag -p /path/to/data.pb.bin  -t /hdmap -f parquet
+robobag extract -i /path/to/data.bag -p /path/to/data.pb.bin  -t /camera_front -f mp4
 ```
+
+## release
+
+- v0.3.0 add cli
+- v0.2.4 init

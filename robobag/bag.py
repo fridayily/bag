@@ -9,6 +9,7 @@ from .util import read_uint32, decode_str, unpack_uint8,\
 import logging
 from .profile_pb2 import Profile
 import json
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ OP_CONNECTION = 0x07
 
 
 class Bag():
-    def __init__(self, file_obj):
+    def __init__(self, file_obj, show_progress=False):
         self._file = file_obj
         self._file_size = 0
         self._version = {}
@@ -34,11 +35,12 @@ class Bag():
         self._max_type_str_len = 0
         self._chunk_pos = []
         self._chunk_info = []
+        self._show_progress = show_progress
 
-        self.profile_bag()
+        self.profiling()
         self._file.close()
 
-    def profile_bag(self):
+    def profiling(self):
         self._file.seek(0)
         self._read_version()
         self._read_bag_header()
@@ -65,7 +67,7 @@ class Bag():
 
     @property
     def profile(self):
-        p = self.profile_json()
+        p = self.profile_json
         return json_format.Parse(json.dumps(p), Profile())
 
     def _read_version(self):
@@ -107,7 +109,10 @@ class Bag():
         return
 
     def _read_bag_connection(self):
-        for i in range(self._bag_header['conn_count']):
+        it = range(self._bag_header['conn_count'])
+        if self._show_progress:
+            it = tqdm(it,  desc="read bag connection")
+        for i in it:
             start = self._file.tell()
             conn, topic, type_, md5sum, msg_def = self._read_connection(
                 self._file)
@@ -154,7 +159,10 @@ class Bag():
         return (type_, md5sum, message_definition, topic)
 
     def _read_bag_chunk_info(self):
-        for i in range(self._bag_header['chunk_count']):
+        it = range(self._bag_header['chunk_count'])
+        if self._show_progress:
+            it = tqdm(it,  desc="read bag chunk info")
+        for i in it:
             start = self._file.tell()
             header = self._read_header(self._file)
             chunk_pos = unpack_uint64(header['chunk_pos'])
@@ -185,7 +193,10 @@ class Bag():
         self._chunk_pos.sort()
 
     def _read_bag_chunk(self):
-        for pos in self._chunk_pos:
+        it = self._chunk_pos
+        if self._show_progress:
+            it = tqdm(it, desc="read bag chunk")
+        for pos in it:
             self._file.seek(pos)
             c = {'_start': pos}
 

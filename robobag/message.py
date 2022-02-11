@@ -7,6 +7,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import numpy as np
 import cv2
+from tqdm import tqdm
 
 from io import BytesIO as StringIO
 from .util import strip_comments, is_valid_package_resource_name,\
@@ -247,10 +248,11 @@ class Registry():
 
 
 class Message():
-    def __init__(self, bag_file_obj, profile_obj):
+    def __init__(self, bag_file_obj, profile_obj, show_progress=False):
         self._file = bag_file_obj
         self._profile = profile_pb2.Profile()
         self._profile.ParseFromString(profile_obj.read())
+        self._show_progress = show_progress
 
         self._conns = {}
         self._topics = {}
@@ -274,7 +276,11 @@ class Message():
         hive_schema = self._to_hive_schema(pa_schema)
 
         data = []
-        for idx in message_data_index:
+        it = message_data_index
+        if self._show_progress:
+            it = tqdm(message_data_index, desc="read topic data")
+
+        for idx in it:
             self._file.seek(idx._start)
             header = read_sized(self._file)
             message_bytes = read_sized(self._file)
@@ -373,7 +379,10 @@ class Message():
         video = cv2.VideoWriter(mp4_file_path,
                                 cv2.VideoWriter_fourcc(*'mp4v'),
                                 fps, (img_width, img_height))
-        for i, buf in enumerate(img_buffers):
+        it = img_buffers
+        if self._show_progress:
+            it = tqdm(it, desc="save image frames")
+        for buf in it:
             with tempfile.NamedTemporaryFile(suffix="."+format) as tmp:
                 tmp.write(buf)
                 img = cv2.imread(tmp.name)

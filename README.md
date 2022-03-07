@@ -14,6 +14,9 @@ protoc -I=./ --python_out=./ ./profile.proto
 # build package
 python3 setup.py sdist
 
+# install from local
+pip3 install dist/robobag-0.3.1.tar.gz
+
 # publish to pypi
 pip install twine
 twine upload dist/*

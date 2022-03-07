@@ -46,7 +46,11 @@ def read_time(f): return Time(*unpack_time(f.read(8)))
 
 # to support non-utf8 decoding ex. /hdmap/horizon/map_offline
 def read_string(f):
-    return read_sized(f).decode('utf-8', errors="backslashreplace")
+    s = read_sized(f)
+    try:
+        return s.decode('utf-8')
+    except UnicodeDecodeError as e:
+        return s.hex()
 
 
 def decode_bytes(v): return v

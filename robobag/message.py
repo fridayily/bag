@@ -92,13 +92,13 @@ class Field():
         _data_type = {
             'byte': pa.int8(),
             'bool': pa.bool_(),
-            'uint8': pa.int16(),  # unsigned unsupported in spark
+            'uint8': pa.uint8(),
             'int8': pa.int8(),
-            'uint16': pa.int32(),  # unsigned unsupported in spark
+            'uint16': pa.uint16(),
             'int16': pa.int16(),
-            'uint32': pa.int64(),  # unsigned unsupported in spark
+            'uint32': pa.uint32(),
             'int32': pa.int32(),
-            'uint64': pa.int64(),  # unsigned unsupported in spark
+            'uint64': pa.uint64(),
             'int64': pa.int64(),
             'float32': pa.float32(),
             'float64': pa.float64(),
@@ -300,6 +300,14 @@ class Message():
                 return "INT"
             elif pa.types.is_int64(t):
                 return "BIGINT"
+            elif pa.types.is_uint8(t):
+                return "SMALLINT"  # unsign not unsupported in spark
+            elif pa.types.is_uint16(t):
+                return "INT"  # unsign not unsupported in spark
+            elif pa.types.is_uint32(t):
+                return "BIGINT"  # unsign not unsupported in spark
+            elif pa.types.is_uint64(t):
+                return "BIGINT"  # unsign not unsupported in spark
             elif pa.types.is_float32(t):
                 return "FLOAT"
             elif pa.types.is_float64(t):

@@ -67,3 +67,6 @@ def extract(bag_file_path, bag_profile_path, message_topic, message_format):
 
 cli.add_command(profile)
 cli.add_command(extract)
+
+if __name__ == '__main__':
+    cli()

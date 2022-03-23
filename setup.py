@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='robobag',
-    version='0.3.1',
+    version='0.3.2',
     description='Tool for processing ros bag file.',
     url='https://github.com/wzy816/bag',
     author_email='no-reply@gmail.com',
